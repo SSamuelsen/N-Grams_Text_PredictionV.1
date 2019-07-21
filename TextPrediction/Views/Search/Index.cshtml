@@ -1,0 +1,143 @@
+﻿@model IEnumerable<TextPrediction.Models.Search>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+
+<div id="autocomplete">
+
+</div>
+
+<input id="search" />
+<button id="submit" class="btn-default" style="width:100px;height:50px;">submit</button>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Query)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Query)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SearchId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SearchId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SearchId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@section  Scripts {
+
+    <script>
+
+        $(document).ready(function () {
+
+
+            $('#search').on('input', function () {
+
+                var searchQuery = $('#search').val();
+                if (!$('#search').val()) {          //check to see if null
+                    $('#autocomplete').text(" ");
+                }
+
+                //create the data object 
+                var data = {
+                    data: {
+                        query: searchQuery,
+                    }
+                }
+
+                $.ajax({
+
+                    type: "POST",
+                    url: '/Search/Ngrams',
+                    data: { data: JSON.stringify(data) },
+                    success: function (response) {
+                        var result = JSON.stringify(response);
+                        $('#autocomplete').text(response.autocomplete);
+                    },
+                    error: function () {
+                        //error check
+
+                    }
+
+                });//end ajax
+
+
+
+
+            });//end oninput
+
+
+
+
+
+
+            $('#submit').on('click', function (e) {
+
+                var query = $('#search').val();
+
+                if (query != '') {
+
+
+
+                    var data = {
+                        data: {
+                            Query: query,
+                            Author: "Stephen"
+                        }
+                    }
+
+                    $.ajax({
+
+                        type: "POST",
+                        url: '/Search/SaveSmartSearchProperties',
+                        data: { data: JSON.stringify(data) },
+                        success: function (response) {
+                            var result = JSON.stringify(response);
+
+                        },
+                        error: function () {
+                            //define error
+                        }
+
+                    });//end ajax
+
+                }
+
+            });//end on event
+
+        })//end document ready
+
+        
+
+
+    </script>
+
+}
