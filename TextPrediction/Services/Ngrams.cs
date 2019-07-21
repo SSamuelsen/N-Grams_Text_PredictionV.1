@@ -44,10 +44,10 @@ namespace TextPrediction.Services
             //save the search string to be used to create the N-Gram model
             string SearchString = string.Join(" ", mostSearchedCopy);
             
-
+            //return the search string to be used for the n-gram model
             return SearchString;
 
-        }
+        }//end func
 
         public IEnumerable<string> CreateNgrams(string text, byte nGramSize)
         {
